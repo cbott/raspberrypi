@@ -21,6 +21,7 @@ class EtchASketch():
         self.BOARD_SIZE= self.width, self.height = self.screen.get_width(), self.screen.get_height()
         self.START_POSITION = [self.width/2, self.height/2]
         self.current_pos = self.START_POSITION
+        self.last_drawn_pos = self.current_pos
         
     def clear_board(self):
         self.screen.fill(EtchASketch.BOARD_COLOR)
@@ -30,7 +31,12 @@ class EtchASketch():
         if (self.current_pos[1]>0 or dy>0) and (self.current_pos[1]<self.height or dy<0):
             self.current_pos[1]+=dy
     def update(self):
-        self.screen.set_at((int(self.current_pos[0]), int(self.current_pos[1])), EtchASketch.LINE_COLOR)
+        pygame.draw.line(self.screen, EtchASketch.LINE_COLOR,
+                         self.last_drawn_pos,
+                         [int(self.current_pos[0]), int(self.current_pos[1])])
+        #self.screen.set_at((int(self.current_pos[0]), int(self.current_pos[1])), EtchASketch.LINE_COLOR)
+        #store the point last drawn to
+        self.last_drawn_pos = [int(self.current_pos[0]), int(self.current_pos[1])]
         pygame.display.flip()
 
 sketch = EtchASketch()
