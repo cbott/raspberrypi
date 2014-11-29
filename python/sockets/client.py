@@ -1,6 +1,7 @@
 # Echo client program
+#designed to run on Raspberry Pi w/ python 2
 import socket
-#192.168.1.5
+
 HOST = '192.168.1.15'    # The remote host
 PORT = 50007              # The same port as used by the server
 
