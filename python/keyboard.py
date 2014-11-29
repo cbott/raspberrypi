@@ -1,5 +1,5 @@
 """
-Python Line EDiting
+#Python program to do non-blocking keyboard reading from terminal
 """
 # Python 2 compatibility
 from __future__ import print_function, unicode_literals
@@ -64,24 +64,21 @@ break_key = ' '#keypress to end the loop
 while key!=ord(break_key):
     key = win.getch()#get keyboard input
     
+    r = False
+    g = False
+    b = False
     if key==ord('r'):#turn red on
-	gpio.output(RED_PIN, False)
-	gpio.output(GREEN_PIN, True)
-        gpio.output(BLUE_PIN, True)
-    elif key==ord('g'):
-        gpio.output(RED_PIN, True)
-	gpio.output(GREEN_PIN, False)
-        gpio.output(BLUE_PIN, True)
-    elif key==ord('b'):
-        gpio.output(RED_PIN, True)
-	gpio.output(GREEN_PIN, True)
-        gpio.output(BLUE_PIN, False)
-    else:#no keys pressed
-	gpio.output(RED_PIN, True)
-	gpio.output(GREEN_PIN, True)
-        gpio.output(BLUE_PIN, True)
-        
-    time.sleep(0.03)
+	r = True
+    if key==ord('g'):
+        g = True
+    if key==ord('b'):
+        b = True
+
+    gpio.output(RED_PIN, not (r))
+    gpio.output(GREEN_PIN, not(g))
+    gpio.output(BLUE_PIN, not(b))    
+
+    time.sleep(0.05)
 print(key)
 
 #cleanup procedures
