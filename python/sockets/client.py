@@ -1,12 +1,13 @@
 # Echo client program
 #designed to run on Raspberry Pi w/ python 2
-import socket
+import socket, pickle
 import RPi.GPIO as gpio
 
 HOST = '192.168.1.15'    # The remote host
 PORT = 50007              # The same port as used by the server
 
 ####setup code
+gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
 RED_PIN = 11
 GREEN_PIN = 12
@@ -19,18 +20,22 @@ gpio.output(GREEN_PIN, True)
 gpio.output(BLUE_PIN, True)
 
 #socket code
+print("Creating socket")
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+print("Attempting to connect to server")
 d_to_send = "Connetction made!"
 s.connect((HOST, PORT))
-s.send(d_to_send.encode("UTF-8"))
-print('Attempted to make connection')
+print("Successfully Connected!")
+s.send(pickle.dumps(d_to_send))
+print('Communicating with server')
 
 while 1:
-    data = s.recv(1024).decode("UTF-8")
-    d_to_send = "Pi recieved:"+data
-    
-    commands = eval(data)
+    data = pickle.loads(s.recv(1024))
+    if data == "halt":
+        break
+    d_to_send = "Pi recieved:"+str(data)
+    print(d_to_send)
+    commands = data
     #run an RGB LED based on input
     r = False
     g = False
@@ -46,10 +51,7 @@ while 1:
     gpio.output(BLUE_PIN, not(b))
 
     #print(d_to_send)
-    s.send(d_to_send.encode("UTF-8"))
-    
-    if data == "halt":
-        break
+    s.send(pickle.dumps(d_to_send))
 
 #cleanup procedures
 s.close()
