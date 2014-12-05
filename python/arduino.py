@@ -10,17 +10,27 @@ class I2C(object):
 		self.bus.write_byte(self.address, value)
 		return -1
 	def readNumber(self):
-		number = self.bus.read_byte(self.address)
+                rec = 0
+                while not rec:
+                        try:
+                                number = self.bus.read_byte(self.address)
+                                rec = 1
+                        except IOError:
+                                rec = 0
 		return number
 
 arduino = I2C()
 while True:
-	var = input("Number 1-9:")
-	if not var:
-		continue
-	arduino.writeNumber(var)
-	print("[RPi] Sent:", var)
-	time.sleep(1)
+	identifier = input("Id (1-15): ")
+	data = input("Data (1-15): ")
+	
+##	if not var:
+##		continue
+	val = identifier<<4 | (data & 0b1111)#make id the 1st 4 bits
+                                            #and data last 4 bits and limit to 4 bits
+	arduino.writeNumber(val)
+	print "[RPi] Sent:", val
+	time.sleep(0.01)
 	number = arduino.readNumber()
-	print("[Arduino] Received:", number)
+	print"[Arduino] Received:", number
 	print
