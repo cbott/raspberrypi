@@ -3,7 +3,7 @@
 import socket, pickle
 import RPi.GPIO as gpio
 
-HOST = '192.168.1.15'    # The remote host
+HOST = '192.168.1.2'    # The remote host
 PORT = 50007              # The same port as used by the server
 
 ####setup code
