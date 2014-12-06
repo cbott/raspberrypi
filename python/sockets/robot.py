@@ -34,7 +34,7 @@ while 1:
                                     #and data last 4 bits and limit to 4 bits
 	arduino.writeNumber(val)
 	print "[RPi] Sent:", val
-	time.sleep(0.05)
+	time.sleep(0.01)
 	number = arduino.readNumber()
 	print"[Arduino] Received:", number
 
