@@ -45,7 +45,7 @@ def end_program(conn):
     sys.exit()
 #################################
 while 1:
-    clock.tick(5)
+    clock.tick(10)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             end_program(conn)
