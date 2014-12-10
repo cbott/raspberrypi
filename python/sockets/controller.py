@@ -80,11 +80,12 @@ while 1:
 
     pygame.display.flip()
 
-    data = pickle.loads(conn.recv(1024))
-    if not data:
-        break
+##    data = pickle.loads(conn.recv(1024))
+##    if not data:
+##        break
 
     val = [r,g,b]
 
     d_to_send = val
     conn.send(pickle.dumps(d_to_send, protocol=2))
+    print("sent ",val)
