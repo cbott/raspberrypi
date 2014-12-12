@@ -1,4 +1,5 @@
-###This program will receive input from the computer runnin controller.py
+###runs o the Raspberry Pi
+###This program will receive input from the computer running controller.py
 ###and send this data to the arduino
 ###it is a combination of arduino.py and client.py
 
@@ -8,7 +9,9 @@ import socket, pickle, time
 HOST = '192.168.1.11'    # The remote host
 PORT = 50007              # The same port as used by the server
 
-DATA_BITS = 4#bits used as data. must match value on arduino
+DATA_BITS = 6#bits used as data. must match value on arduino
+
+old_data = [0,0,0,0]
 
 arduino = I2C()
 
@@ -36,16 +39,19 @@ while 1:
     if data == "halt":#end program if server terminates connection
         break
     
-    #run an RGB LED based on input
-    for i in range(3):
-        val = combine_bits(DATA_BITS, i+1, data[i])#make id the 1st 4 bits
+    #run an arduino based on input
+    for i in range(len(data)):
+        if data[i] != old_data[i]:
+            val = combine_bits(DATA_BITS, i+1, data[i])#make id the 1st 4 bits
                                     #and data last 4 bits and limit to 4 bits
-	arduino.writeNumber(val)
-	print "[RPi] Sent:", val
-	number = arduino.readNumber()
-	print"[Arduino] Received:", number
+            arduino.writeNumber(val)
+            print "[RPi] Sent:", val
 
-    #print(d_to_send)
+##	number = arduino.readNumber()
+##	print"[Arduino] Received:", number
+
+    old_data = data
+    
     s.send(pickle.dumps(d_to_send))
 
 cleanup()
