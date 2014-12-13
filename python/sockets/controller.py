@@ -15,7 +15,7 @@ s.listen(5)
 ###
 size = width, height = (500, 500)
 current_pos = (width/2.0,height/2.0)
-background = (0,0,0)
+background = (255,255,255)
 
 pygame.init()
 screen = pygame.display.set_mode(size)
@@ -51,32 +51,26 @@ while 1:
             end_program(conn)
 
     keys = pygame.key.get_pressed()
-    
-    r=0
-    g=0
-    b=0
-    if keys[K_r]:
-        r = 255
-    if keys[K_g]:
-        g = 255
-    if keys[K_b]:
-        b = 255
-  
-    background = (r,g,b)
-    screen.fill(background)
-    
+
+    drive = 0#forward:1 #back:2 #left:3 #right:4
+
 #move a ball with the arrow keys
-##    move = [0,0]
-##    if keys[K_LEFT]:
-##        move[0] = -1
-##    if keys[K_RIGHT]:
-##        move[0] = 1
-##    if keys[K_UP]:
-##        move[1] = -1
-##    if keys[K_DOWN]:
-##        move[1] = 1
-##    pointrect = pointrect.move(move)
-##    screen.blit(point, pointrect)
+    move = [0,0]
+    if keys[K_UP]:
+        move[1] = -1
+        drive = 1
+    elif keys[K_DOWN]:
+        move[1] = 1
+        drive = 2
+    elif keys[K_LEFT]:
+        move[0] = -1
+        drive = 3
+    elif keys[K_RIGHT]:
+        move[0] = 1
+        drive = 4
+
+    pointrect = pointrect.move(move)
+    screen.blit(point, pointrect)
 
     pygame.display.flip()
 
@@ -84,8 +78,8 @@ while 1:
 ##    if not data:
 ##        break
 
-    val = [r,g,b]
+    commands = [drive]#values for the drivetrain
 
-    d_to_send = val
+    d_to_send = commands
     conn.send(pickle.dumps(d_to_send, protocol=2))
-    print("sent ",val)
+    print("sent ",commands)
