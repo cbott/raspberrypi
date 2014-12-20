@@ -47,11 +47,11 @@ while 1:
             arduino.writeNumber(val)
             print "[RPi] Sent:", val
 
-##	number = arduino.readNumber()
+    robot_data = arduino.readNumber()
 ##	print"[Arduino] Received:", number
 
     old_data = data
     
-    s.send(pickle.dumps(d_to_send))
+    s.send(pickle.dumps(robot_data))
 
 cleanup()
