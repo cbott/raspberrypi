@@ -52,9 +52,9 @@ while 1:
 
     keys = pygame.key.get_pressed()
 
+#Read keyboard
+    ##drivetrain
     drive = 0#forward:1 #back:2 #left:3 #right:4
-
-#move a ball with the arrow keys
     move = [0,0]
     if keys[K_UP]:
         move[1] = -1
@@ -68,18 +68,32 @@ while 1:
     elif keys[K_RIGHT]:
         move[0] = 1
         drive = 4
+    ##gripper
+    gripper = 0#open:1 #close:2    
+    if keys[K_KP1]:
+        gripper = 1
+    elif keys[K_KP2]:
+        gripper = 2
 
     pointrect = pointrect.move(move)
-    screen.blit(point, pointrect)
 
-    pygame.display.flip()
-
-##    data = pickle.loads(conn.recv(1024))
-##    if not data:
-##        break
-
-    commands = [drive]#values for the drivetrain
-
+    ##Send data
+    commands = [drive, gripper]#values for the robot
     d_to_send = commands
     conn.send(pickle.dumps(d_to_send, protocol=2))
-    print("sent ",commands)
+
+    ##Receive data
+    gripper_sensor=0
+    print("sent ",commands, end=" ")
+    try:
+        data = pickle.loads(conn.recv(1024))
+        print("--Reply from client: ", data)
+        if data == 1:
+            screen.fill((134,12,123))
+        else: screen.fill(background)
+    except:
+        print("--Failed")
+
+    ##draw screen
+    screen.blit(point, pointrect)
+    pygame.display.flip()
