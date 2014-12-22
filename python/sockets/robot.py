@@ -6,12 +6,12 @@
 from i2c import *
 import socket, pickle, time
 
-HOST = '192.168.1.11'    # The remote host
+HOST = '192.168.1.2'    # The remote host
 PORT = 50007              # The same port as used by the server
 
-DATA_BITS = 6#bits used as data. must match value on arduino
+DATA_BITS = 3#bits used as data. must match value on arduino
 
-old_data = [0,0,0,0]
+old_data = [0]*(2**(8-DATA_BITS))
 
 arduino = I2C()
 
@@ -31,8 +31,12 @@ def cleanup():
     print("connection terminated by server")
 
 while 1:
-    data = pickle.loads(s.recv(1024))
-    
+    try:
+        data = pickle.loads(s.recv(1024))
+    except Exception as e:
+        s.send(pickle.dumps("Client Error:"+str(e)))
+        print("Error loading data from server:"+str(e))
+        
     d_to_send = "Pi recieved:"+str(data)
     print(d_to_send)
     
@@ -42,8 +46,8 @@ while 1:
     #run an arduino based on input
     for i in range(len(data)):
         if data[i] != old_data[i]:
-            val = combine_bits(DATA_BITS, i+1, data[i])#make id the 1st 4 bits
-                                    #and data last 4 bits and limit to 4 bits
+            val = combine_bits(DATA_BITS, i+1, data[i])#make id the 1st bits
+                                    #and data last bits and limit to DATA_BITS bits
             arduino.writeNumber(val)
             print "[RPi] Sent:", val
 
