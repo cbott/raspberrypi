@@ -68,20 +68,66 @@ while 1:
     elif keys[K_RIGHT]:
         move[0] = 1
         drive = 4
+    ##base #right:1 #left:2
+    base = 0
+    if keys[K_a]:
+        base = 2
+    elif keys[K_d]:
+        base = 1
+    ##shoulder #forward:1 #backward:2
+    shoulder = 0
+    if keys[K_w]:
+        shoulder = 1
+    elif keys[K_s]:
+        shoulder = 2
+    ##elbow #up:1 #down:2
+    elbow = 0
+    if keys[K_r]:
+        elbow = 1
+    elif keys[K_f]:
+        elbow = 2
+    ##wrist #up:1 #down:2
+    wrist = 0
+    if keys[K_t]:
+        wrist = 1
+    elif keys[K_g]:
+        wrist = 2
+    ##wrist rotation #left:1 #right:2
+    wrist_rotate = 0
+    if keys[K_q]:
+        wrist_rotate = 1
+    elif keys[K_e]:
+        wrist_rotate = 2
     ##gripper
     gripper = 0#open:1 #close:2    
-    if keys[K_KP1]:
+    if keys[K_PERIOD]:
         gripper = 1
-    elif keys[K_KP2]:
+    elif keys[K_COMMA]:
         gripper = 2
-
+    ##go to home position
+    home = 0
+    if keys[K_SPACE]:
+        home = 1
+        
     pointrect = pointrect.move(move)
 
     ##Send data
-    commands = [drive, gripper]#values for the robot
+    commands = [drive, base, shoulder,
+                elbow, wrist, wrist_rotate,
+                gripper, home]#values for the robot
     d_to_send = commands
-    conn.send(pickle.dumps(d_to_send, protocol=2))
-
+    try:
+        conn.send(pickle.dumps(d_to_send, protocol=2))
+    except (ConnectionResetError, ConnectionAbortedError):
+        print("Client Lost Connection: Trying to reconnect")
+        conctd = False
+        while not conctd:
+            conctd = True
+            try:
+                conn, addr = s.accept()
+            except BlockingIOError:
+                conctd = False
+        print("Reconnecting successful!")
     ##Receive data
     gripper_sensor=0
     print("sent ",commands, end=" ")
